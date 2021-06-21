@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 import pandas as pd
 from .models import *
+import xlwt
+from django.http import HttpResponse
+from django.conf import Settings
 
 
 # Create your views here.
@@ -8,10 +11,10 @@ from .models import *
 def excelfile(request):
 
     if request.method == "POST":
-        excel_file = request.FILES['excel_file']
-        handelfile = HandleExcel.objects.create(excel_file = excel_file)
+        excelfile = request.FILES['excelfile']
+        handelfile = HandleExcel.objects.create(excelfile = excelfile)
 
-        datas = pd.read_excel(handelfile.excel_file)
+        datas = pd.read_excel(handelfile.excelfile)
 
         for data in datas.values.tolist():
             Musician_obj, _ = Musician.objects.get_or_create(
@@ -33,3 +36,34 @@ def excelfile(request):
                
 
     return render(request, 'excelhome.html')
+
+
+def export_excel(request):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="Books.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+
+    ws = wb.add_sheet('Album') 
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['artist', 'name', 'release_date', 'num_stars', ]
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+
+    font_style = xlwt.XFStyle()
+   # aa = Musician.objects.all()
+    rows = Album.objects.values_list('artist', 'name', 'release_date', 'num_stars')
+    for row in rows:
+        row_num += 1
+        for col_num in range(len(row)):
+            ws.write(row_num, col_num, row[col_num], font_style)
+
+    wb.save(response)
+
+    return response    

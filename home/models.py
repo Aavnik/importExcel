@@ -6,7 +6,7 @@ from django.db import models
 
 
 class HandleExcel(models.Model):
-    excel_file = models.FileField(upload_to="excel")
+    excelfile = models.FileField(upload_to="excel")
 
 class Musician(models.Model):
     first_name = models.CharField(max_length=50)

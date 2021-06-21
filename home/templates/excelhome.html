@@ -10,9 +10,13 @@
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <input type="file" name="excel_file">
+        <input type="file" name="excelfile">
         <button type="submit">Upload</button>
     </form>
+    <li>
+       
+        <a class="btn btn-danger" href="{% url 'export_excel' %}" role="button">Download excel</a>
+    </li>
     
 </body>
 </html>

@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import *
+from home import views
 
 urlpatterns = [
-   path('',excelfile)
+   path('',views.excelfile),
+   path('export_excel', views.export_excel, name='export_excel')
 ]
